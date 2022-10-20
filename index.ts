@@ -22,12 +22,17 @@ function initMap(): void {
   const biasInputElement = document.getElementById(
     "use-location-bias"
   ) as HTMLInputElement;
+
+  // 使用这个控件
   const strictBoundsInputElement = document.getElementById(
     "use-strict-bounds"
   ) as HTMLInputElement;
+
+
   const options = {
     fields: ["formatted_address", "geometry", "name"],
-    strictBounds: false,
+    strictBounds: true,
+    bounds:{ east: 135, west: 73, north: 53, south: 3 },
     types: ["establishment"],
   };
 
@@ -35,10 +40,13 @@ function initMap(): void {
 
   const autocomplete = new google.maps.places.Autocomplete(input, options);
 
+
+
+
   // Bind the map's bounds (viewport) property to the autocomplete object,
   // so that the autocomplete requests use the current map bounds for the
   // bounds option in the request.
-  autocomplete.bindTo("bounds", map);
+  // autocomplete.bindTo("bounds", map);
 
   const infowindow = new google.maps.InfoWindow();
   const infowindowContent = document.getElementById(
@@ -57,7 +65,11 @@ function initMap(): void {
     marker.setVisible(false);
 
     const place = autocomplete.getPlace();
-
+    if( place.geometry&&place.geometry.location) {
+      console.log('获取选择的地址 la',place.geometry.location.lat());
+      console.log('获取选择的地址 long',place.geometry.location.lng());
+    }
+    
     if (!place.geometry || !place.geometry.location) {
       // User entered the name of a Place that was not suggested and
       // pressed the Enter key, or the Place Details request failed.
@@ -84,50 +96,51 @@ function initMap(): void {
 
   // Sets a listener on a radio button to change the filter type on Places
   // Autocomplete.
-  function setupClickListener(id, types) {
-    const radioButton = document.getElementById(id) as HTMLInputElement;
+  // function setupClickListener(id, types) {
+  //   const radioButton = document.getElementById(id) as HTMLInputElement;
 
-    radioButton.addEventListener("click", () => {
-      autocomplete.setTypes(types);
-      input.value = "";
-    });
-  }
+  //   radioButton.addEventListener("click", () => {
+  //     autocomplete.setTypes(types);
+  //     input.value = "";
+  //   });
+  // }
 
-  setupClickListener("changetype-all", []);
-  setupClickListener("changetype-address", ["address"]);
-  setupClickListener("changetype-establishment", ["establishment"]);
-  setupClickListener("changetype-geocode", ["geocode"]);
-  setupClickListener("changetype-cities", ["(cities)"]);
-  setupClickListener("changetype-regions", ["(regions)"]);
+  // setupClickListener("changetype-all", []);
+  // setupClickListener("changetype-address", ["address"]);
+  // setupClickListener("changetype-establishment", ["establishment"]);
+  // setupClickListener("changetype-geocode", ["geocode"]);
+  // setupClickListener("changetype-cities", ["(cities)"]);
+  // setupClickListener("changetype-regions", ["(regions)"]);
 
-  biasInputElement.addEventListener("change", () => {
-    if (biasInputElement.checked) {
-      autocomplete.bindTo("bounds", map);
-    } else {
-      // User wants to turn off location bias, so three things need to happen:
-      // 1. Unbind from map
-      // 2. Reset the bounds to whole world
-      // 3. Uncheck the strict bounds checkbox UI (which also disables strict bounds)
-      autocomplete.unbind("bounds");
-      autocomplete.setBounds({ east: 180, west: -180, north: 90, south: -90 });
-      strictBoundsInputElement.checked = biasInputElement.checked;
-    }
+  // biasInputElement.addEventListener("change", () => {
+  //   if (biasInputElement.checked) {
+  //     autocomplete.bindTo("bounds", map);
+  //   } else {
+  //     // User wants to turn off location bias, so three things need to happen:
+  //     // 1. Unbind from map
+  //     // 2. Reset the bounds to whole world
+  //     // 3. Uncheck the strict bounds checkbox UI (which also disables strict bounds)
+  //     autocomplete.unbind("bounds");
+  //     // 这里设置
+  //     // autocomplete.setBounds();
+  //     strictBoundsInputElement.checked = biasInputElement.checked;
+  //   }
 
-    input.value = "";
-  });
+  //   input.value = "";
+  // });
 
-  strictBoundsInputElement.addEventListener("change", () => {
-    autocomplete.setOptions({
-      strictBounds: strictBoundsInputElement.checked,
-    });
+  // strictBoundsInputElement.addEventListener("change", () => {
+  //   // autocomplete.setOptions({
+  //   //   strictBounds: strictBoundsInputElement.checked,
+  //   // });
 
-    if (strictBoundsInputElement.checked) {
-      biasInputElement.checked = strictBoundsInputElement.checked;
-      autocomplete.bindTo("bounds", map);
-    }
+  //   // if (strictBoundsInputElement.checked) {
+  //   //   biasInputElement.checked = strictBoundsInputElement.checked;
+  //     // autocomplete.bindTo("bounds", map);
+  //   // }
 
-    input.value = "";
-  });
+  //   // input.value = "";
+  // });
 }
 
 declare global {
