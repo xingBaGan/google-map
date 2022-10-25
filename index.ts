@@ -26,20 +26,12 @@ function initMap(): void {
 
   const autocomplete = new google.maps.places.Autocomplete(input, options);
 
-  const infowindow = new google.maps.InfoWindow();
-  const infowindowContent = document.getElementById(
-    "infowindow-content"
-  ) as HTMLElement;
-
-  infowindow.setContent(infowindowContent);
-
   const marker = new google.maps.Marker({
     map,
     anchorPoint: new google.maps.Point(0, -29),
   });
 
   autocomplete.addListener("place_changed", () => {
-    infowindow.close();
     marker.setVisible(false);
 
     const place = autocomplete.getPlace();
@@ -66,10 +58,6 @@ function initMap(): void {
     marker.setPosition(place.geometry.location);
     marker.setVisible(true);
 
-    // infowindowContent.children["place-name"].textContent = place.name;
-    // infowindowContent.children["place-address"].textContent =
-    //   place.formatted_address;
-    // infowindow.open(map, marker);
   });
 
 

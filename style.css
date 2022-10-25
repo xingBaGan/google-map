@@ -91,3 +91,6 @@ body {
   padding: 6px 12px;
 }
 
+.pac-logo.hdpi::after{
+  display: none !important;
+}
